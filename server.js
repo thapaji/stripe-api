@@ -1,9 +1,11 @@
 import express from 'express';
 import stripe from 'stripe';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 
 const port = 3000;
 const strip = new stripe(process.env.STRIPE_KEY)
@@ -38,6 +40,19 @@ app.post('/create-stripe-payment', async (req, res) => {
             status: 'False',
             message: error.message,
         });
+    }
+})
+
+app.post('/confirm-order', async (req, res) => {
+    try {
+        const { paymentIntent } = req.body;
+        console.log(paymentIntent)
+        res.json({
+            status: 'True',
+            message: 'Payment confirmed successfully',
+        })
+    } catch (error) {
+        console.log(error)
     }
 })
 
